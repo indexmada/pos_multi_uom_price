@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_pos_pos_form_line_uom" model="ir.ui.view">
+        <field name="name">pos.order.form.view.inherit</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"></field>
+        <field name="arch" type="xml">
+            <xpath expr="/form/sheet/notebook/page/field[@name='lines']/tree/field[@name='qty']" position="after">
+                <field name="uom_id" readonly="1" string="UOM"/>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page/field[@name='lines']/form/group/field[@name='tax_ids_after_fiscal_position']" position="after">
+                <field name="uom_id" readonly="1" string="UOM"/>
+            </xpath>         
+        </field>
+    </record>
+
+</odoo>
