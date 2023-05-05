@@ -83,6 +83,30 @@ class PosOrder(models.Model):
                     'location_dest_id': destination_id if line.qty >= 0 else return_pick_type != picking_type and return_pick_type.default_location_dest_id.id or location_id,
                 })
 
+            # ===================
+            # Changes: create stock move for all product components
+            for line in order.lines:
+                if line.product_id.product_pack:
+                    for item in line.product_id.product_item_ids.filtered(
+                            lambda p: p.product_id.type in ['product', 'consu']):
+
+                        product_qty = item.quantity * line.qty
+
+                        moves |= Move.create({
+                            'name': _('%s: %s from Pack %s' % (line.name, item.product_id.name, line.product_id.name)),
+                            'product_uom': item.uom_id.id,
+                            'picking_id': order_picking.id if product_qty >= 0 else return_picking.id,
+                            'picking_type_id': picking_type.id if product_qty >= 0 else return_pick_type.id,
+                            'product_id': item.product_id.product_variant_ids[:1].id,
+                            'product_uom_qty': abs(product_qty),
+                            'state': 'draft',
+                            'location_id': location_id if product_qty >= 0 else destination_id,
+                            'location_dest_id': destination_id if product_qty >= 0
+                            else return_pick_type != picking_type and
+                            return_pick_type.default_location_dest_id.id or location_id,
+                        })
+            # ===================
+
             # prefer associating the regular order picking, not the return
             order.write({'picking_id': order_picking.id or return_picking.id})
 
