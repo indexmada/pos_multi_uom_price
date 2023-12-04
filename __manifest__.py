@@ -15,7 +15,8 @@
         'security/ir.model.access.csv',
         'views/product_view.xml',
         'views/pos_multi_uom_price_templates.xml',
-        'views/pos_order_views.xml'
+        'views/pos_order_views.xml',
+        'views/action_server.xml',
     ],
     'qweb': [
         'static/src/xml/pos_multi_uom_price_templates.xml',
