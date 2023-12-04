@@ -33,9 +33,17 @@ class ProductTemplate(models.Model):
 
             for uom in all_uom:
                 current_ratio = uom.factor if uom.uom_type == 'smaller' else uom.factor_inv if uom.uom_type == "bigger" else 1
+                result = 0
+                if uom.uom_type == 'smaller':
+                    result = default_ratio * list_price / current_ratio
+                elif uom.uom_type == 'bigger':
+                    result = default_ratio * list_price * current_ratio
+                else:
+                    result = default_ratio * list_price / 1
+
                 temp_uom = uom_obj.create({
                         "uom_id": uom.id,
-                        "price": default_ratio * list_price / current_ratio
+                        "price": result,
                     })
 
                 res_uom |= temp_uom
